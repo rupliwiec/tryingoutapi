@@ -50,8 +50,8 @@ def get_post(id: int):
     return {"post detail": post}
 
 
-    @app.delete("/posts/{id}")
-    def delete_post():
+    @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+    def delete_post(id: int):
         # deleting post
         # find the index in the array that has required the ID
         # my_posts.pop(index)
