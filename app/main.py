@@ -28,10 +28,10 @@ while True:
 
 my_posts=[{"title": "title of post 1", "content": "content of post 1", "id": 1}, {"title": "favourite foods", "content": "I like pizza", "id": 2}]
 
-def find_post(id):
-    for p in my_posts:
-        if p["id"] == id:
-            return p
+# def find_post(id):
+#     for p in my_posts:
+#         if p["id"] == id:
+#             return p
 
 
 def find_index_post(id):
@@ -61,7 +61,8 @@ def create_posts(post: Post):
 
 @app.get("/posts/{id}")
 def get_post(id: int):
-    post = find_post(id)
+    cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id)))
+    post = cursor.fetchone()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"post with id: {id} was not found")
     return {"post detail": post}
