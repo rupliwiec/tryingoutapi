@@ -15,7 +15,7 @@ class Post(BaseModel):
     published: bool = True
 
 while True:
-
+    #get rid of hardcode later
     try:
         conn = psycopg2.connect(host='localhost', database='fastapi', user='postgres', password='nothingtosay1878', cursor_factory=RealDictCursor)
         cursor = conn.cursor()
@@ -46,6 +46,9 @@ def root():
 
 @app.get("/posts")
 def get_posts():
+    cursor.execute(""" SELECT * FROM posts """)
+    posts = cursor.fetchall()
+    print(posts)
     return {"data": my_posts}
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
@@ -81,7 +84,7 @@ def update_post(id: int, post: Post):
 
     if index == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"post with id: {id} does not exist")
-    
+        
         my_posts.pop(index)
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     
