@@ -102,13 +102,23 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     db.commit()
 
 @app.put("/posts/{id}")
-def update_post(id: int, post: Post):
+def update_post(id: int, post: Post, db: Session = Depends(get_db)):
 
-    cursor.execute(""" UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """, (post.title, post.content, post.published, str(id)))
-    updated_post = cursor.fetchone()
-    conn.commit()
+    # cursor.execute(""" UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING * """, (post.title, post.content, post.published, str(id)))
+    # updated_post = cursor.fetchone()
+    # conn.commit()
 
-    if updated_post == None:
+    # just saving query in post_query
+    post_query = db.query(models.Post).filter(models.Post.id == id)
+    # will grab post if it exists
+    post = post_query.first()
+
+    if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"post with id: {id} does not exist")
+    
+    # chaining update
+    post_query.update({'title': 'this is updated title', 'content': 'updated content'}, synchronize_session=False)
 
-    return {'data': updated_post}
+    db.commit()
+
+    return {'data': 'succsessful'}
