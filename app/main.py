@@ -36,10 +36,10 @@ my_posts=[{"title": "title of post 1", "content": "content of post 1", "id": 1},
 #             return p
 
 
-def find_index_post(id):
-    for i, p in enumerate(my_posts):
-        if p['id'] == id:
-            return i
+# def find_index_post(id):
+#     for i, p in enumerate(my_posts):
+#         if p['id'] == id:
+#             return i
 
 
 @app.get("/")
@@ -51,7 +51,7 @@ def get_posts(db: Session = Depends(get_db)):
     # cursor.execute(""" SELECT * FROM posts """)
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
-    return {"data": posts}
+    return posts
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
@@ -64,7 +64,7 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_post)
 
-    return {"data": new_post}
+    return new_post
 
 @app.get("/posts/{id}")
 def get_post(id: int, db: Session = Depends(get_db)):
@@ -74,7 +74,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail= f"post with id: {id} was not found")
-    return {"post detail": post}
+    return post
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: Session = Depends(get_db)):
@@ -110,4 +110,4 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
 
     db.commit()
 
-    return {'data': post_query.first()}
+    return post_query.first()
